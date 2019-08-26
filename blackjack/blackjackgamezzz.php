@@ -16,99 +16,85 @@
 <?php
 //carddeck
 $dec = 
-['A' => '11',
-'2' => '2',
-'3' => '3',
-'4' => '4',
-'5' => '5',
-'6' => '6',
-'7' => '7',
-'8' => '8',
-'9' => '9',
-'10' => '10',
-'K' => '10',
-'Q' => '10',
-'J' => '10'];
-
-$hand = [];
+['1' => 1,
+'2' => 2,
+'3' => 3,
+'4' => 4,
+'5' => 5,
+'6' => 6,
+'7' => 7,
+'8' => 8,
+'9' => 9,
+'10' =>10];
 
 session_start(); //To hold your value until you say so
-$random_key1  = array_rand($dec);
-$random_key2 = array_rand($dec);
-$random_key3 = array_rand($dec);
-$random_key4 = array_rand($dec);
-$random_key5 = array_rand($dec);
-
-$card1 = $_SESSION['random1'];
-$card2 = $_SESSION['random2'];
-
-array_push($hand, $card1, $card2);
-$handSum = array_sum($hand);
-
-
-
-//declare "vaste" value
-if(!isset($_SESSION['random1'])){
-    $_SESSION['random1'] = $dec[$random_key1];
-    }
-
-if(!isset($_SESSION['random2'])){
-    $_SESSION['random2'] = $dec[$random_key2];
-     }
-
-
-echo $card1 . " " . $card2;
-
-
-switch ($_GET['hitButton']) {
-    case "Hit me!":
-    if (isset($_GET['hitButton'])) {
-        if (!($_SESSION['hitButton'])) {
-            $_SESSION['hitButton'] = 1;
-        } else {
-            $count = $_SESSION['hitButton'] + 1;
-            $_SESSION['hitButton'] = $count;
-        }
-    }
-    echo "weeeee" . $_SESSION['hitButton'] . "weeeeee";
-        if ($handSum == 21) {
-            echo "You win!";
-        }
-        if ($_SESSION['hitButton']=3) {
-            if ($handSum < 21) {
-                echo "hit again";
-            }
-            // switch ($card3) {
-                // case "":
-                // if (!isset($_SESSION['random3'])) {
-                //     $_SESSION['random3'] = $dec[$random_key3];
-                // }
-                //     $card3 = $_SESSION['random3'];
-                //     array_push($hand, $card3);
-                //     echo "   card 3= " . $card3 . "   ";
-                //     echo "++++++" . array_sum($hand) . "+++++++";
-        }
-            
-        
-                    break;
-    }
-
-
-switch ($_GET['standButton']) {
-    case "Stand":
-    unset($_SESSION['random1']);//reset 
-    unset($_SESSION['random2']);//reset
-    unset($_SESSION['random3']);//reset 
-    unset($_SESSION['random4']);//reset
-    unset($_SESSION['random5']);//reset
-    unset($_SESSION['hitButton']);//reset
-    unset($hand);
-        break;
+if (!isset($_SESSION['playerHand'])){
+ $_SESSION['playerHand'] = [];
 }
-switch ($_GET['foldButton']) {
-    case "Fold":
+if (!isset($_SESSION['dealerHand'])){
+    $_SESSION['dealerHand'] = [];
+   }
+
+$hand = $_SESSION['playerHand'];
+$dealerHand = $_SESSION['dealerHand'];
+
+if(count($hand) < 2){
+    $_SESSION['playerHand'] = $hand;
+    array_push($hand, array_rand($dec));
+    array_push($hand, array_rand($dec));
+    echo implode( ", ", $hand) . '<br />';
+}
+
+if($_GET['hitButton'] == "Hit me!" ) {
+ 
+    array_push($hand, array_rand($dec));
+
+    $_SESSION['playerHand'] = $hand;
+    $handSum = array_sum($hand);
+
+
+    echo '<img src="cards/' . $_SESSION['card1'] .'.png" class="playerCard" width="130px" height="auto">';
+    echo implode( ", ", $hand) . " - Total: " . $handSum;
+
+    if($handSum > 21){
+        echo '<br />You Lose <button>Try Again</button>';
+        unset($_SESSION['playerHand']);
+        return;
+    }
+    
+    if($handSum == 21 && $dealerHandSum != 21 || (count($hand) == 5 && $handSum <= 21)){
+        echo "<br />You Win <button>Try Again</button>"; 
+        unset($_SESSION['playerHand']);
+        return;
+    }
+}
+
+if ($_GET['standButton']) {
+    //dealer logic
+    $_SESSION['dealerHand'] = $dealerHand;
+    array_push($dealerHand, array_rand($dec));
+    $dealerHandSum = array_sum($dealerHand);
+    if($dealerHandSum > 21){
+        $handSum = array_sum($hand);
+        echo "Your total: $handSum <br />Dealer total: $dealerHandSum  <br /> You win <button>Try Again</button>";
+        unset($_SESSION['playerHand']);
+        return;
+    }
+    
+    if($dealerHandSum == 21 || (count($dealerHand) == 5 && $dealerHandSum <= 21)){
+        $handSum = array_sum($hand);
+        echo "Your total: $handSum <br />Dealer total: $dealerHandSum  <br /> You lose <button>Try Again</button>";
+        unset($_SESSION['playerHand']);
+        return;
+    }
+
+    
+}
+
+if ($_GET['foldButton']) {
+    unset($_SESSION['playerHand']);
         echo "You lose!";
-        break;
+        
 }
 
 ?>
