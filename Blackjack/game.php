@@ -14,10 +14,10 @@ body{
 }
 
 #button{
-    background-color: none;
     width: 170px;
     height: 40px;
-    margin: 10px 5px 5px 50px; 
+    margin: 10px 5px 5px 30px; 
+    background-color: rgba(0, 0, 0, 0)
 }
 
 label{
@@ -38,8 +38,8 @@ label{
         <input type="submit" id="button" name="foldButton" value="Fold">
     </form>
 <?php
-//carddeck
 
+//set carddeck
 $dec = 
 ['1' => 11,
 '2' => 2,
@@ -63,25 +63,24 @@ if (!isset($_SESSION['playerHand'])){
 if (!isset($_SESSION['dealerHand'])){
     $_SESSION['dealerHand'] = [];
    }
-
 $hand = $_SESSION['playerHand'];
 $dealerHand = $_SESSION['dealerHand'];
 
+//////////////////HIT///////////////////
 if($_GET['hitButton'] == "Hit me!" ){
-
+    //set starthand (2cards to start when you click start)
     if(count($hand) < 1){
         $_SESSION['playerHand'] = $hand;
         array_push($hand, array_rand($dec));
-       
-        echo '<br />';
     }
-    
+    //get new card and add to hand
     array_push($hand, array_rand($dec));
     $_SESSION['playerHand'] = $hand;
     $handSum = array_sum($hand);
+    //first two images
     echo '<img src="cards/' . $hand[0] .'.png" class="playerCard" width="120px" height="auto">';
     echo '<img src="cards/' . $hand[1] .'.png" class="playerCard" width="120px" height="auto">';
-
+    //Show cardbacks until it get a new image
     if(count($hand) < 3){
         echo '<img src="cards/cardback.png" class="playerCard" width="130px" height="185px">';
     } else {
@@ -114,7 +113,9 @@ if($_GET['hitButton'] == "Hit me!" ){
     }
 }
 
+//////////////////Stand///////////////////
 if ($_GET['standButton']) {
+    //upload the players hand and push in the hand
     $handSum = array_sum($hand);
 
     //dealer logic
@@ -123,7 +124,7 @@ if ($_GET['standButton']) {
         array_push($dealerHand, array_rand($dec));
         $dealerHandSum = array_sum($dealerHand);
     }
-
+    
     $_SESSION['dealerHand'] = $dealerHand;
         if ($dealerHandSum > 21) {
         $dealerHandSum = array_sum($dealerHand);
@@ -148,6 +149,7 @@ if ($_GET['standButton']) {
     } 
 }
 
+//////////////////Fold///////////////////
 if ($_GET['foldButton']) {
     unset($_SESSION['playerHand']);
         echo "You lose!";
