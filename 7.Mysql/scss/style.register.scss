@@ -1,0 +1,29 @@
+body{
+    margin-top: 5%;
+    display: flex;
+
+    font-family: Tahoma, Geneva, sans-serif;
+    background-image: url(2.jpeg);
+    background-repeat: no-repeat;  
+}
+
+.formy{
+    margin-left:-55%;
+}
+
+.buttons{
+    margin: -20px 0 0 1000px;
+}
+
+.login , .logout{
+    font-size: 18px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border:solid black 1px;
+    padding: 3px;
+    width: 100px;
+    border-radius: 10px;
+}
+
+.login:hover, .logout:hover{
+    background-color: #868a9936
+}
